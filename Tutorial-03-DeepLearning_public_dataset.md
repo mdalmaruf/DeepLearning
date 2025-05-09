@@ -1,4 +1,4 @@
-# 🧪 Tutorial 4: Deep Learning Regression with Real-World Dataset – Wine Quality
+# Tutorial 3: Deep Learning Regression with Real-World Dataset – Wine Quality
 
 This tutorial uses the UCI Wine Quality dataset to predict wine ratings based on physicochemical properties. It introduces key concepts like loss functions, learning rate, batch size, optimizers, activation functions, and neural network architecture.
 
