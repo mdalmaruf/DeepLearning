@@ -29,7 +29,7 @@ This is **exactly the same** as linear regression, where:
 * **x** = input (e.g., house size)
 * **w** = weight (how much input affects output)
 * **b** = bias (base value when x = 0)
-* **\hat{y}** = predicted output (e.g., price)
+* **$$\hat{y}$$** = predicted output (e.g., price)
 
 ### 📦 What Are We Fitting?
 
