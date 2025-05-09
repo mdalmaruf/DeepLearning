@@ -290,6 +290,18 @@ This is how the model uses learned patterns to estimate the chance of success.
 
 ### ⚡ What Does ReLU Really Do?
 
+🧩 **Why Do We Need Non-Linearity at All?**
+
+* If we don’t use a non-linear activation like ReLU, the entire network behaves like a single linear equation, no matter how many layers we add.
+* Real-world problems are rarely linear — e.g., a little more sleep might help, but too much might hurt — that’s a **non-linear** pattern.
+* **Non-linearity** lets the network build **curves, thresholds, and complex patterns** — things linear models can’t do.
+
+🎯 **Why Make Negative Outputs Zero Instead of Using Actual Values?**
+
+* ReLU turns all negative values into 0 — this simplifies how the model filters information.
+* It introduces **sparsity** — not all neurons fire for all inputs, which mimics real biological neurons and reduces noise.
+* A neuron with a negative weighted sum might mean the input feature is not useful for this path — so we block it.
+
 **ReLU (Rectified Linear Unit)** is defined as:
 
 ```
@@ -322,7 +334,7 @@ f(x) = 1 / (1 + exp(-x))
 
 It compresses any real number input into the range **(0, 1)**.
 
-🧠 **Real-Life Analogy**:
+**Real-Life Analogy**:
 
 * Think of sigmoid as a dimmer switch for light:
 
@@ -359,7 +371,7 @@ w = w - learning_rate × gradient
 
 7. Repeat this over many samples and epochs → model improves.
 
-**Analogy: Practicing a Skill**
+🧠 **Analogy: Practicing a Skill**
 
 * Think of shooting basketball:
 
@@ -369,5 +381,3 @@ w = w - learning_rate × gradient
   * You repeat and get better — just like a neural network.
 
 ---
-
-
