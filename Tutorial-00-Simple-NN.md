@@ -56,7 +56,7 @@ Unlike linear models, neural networks:
 ---
 
 
-# 🧪 BONUS: Neural Network for Classification with 2 Features and 1 Hidden Layer
+# Neural Network for Classification with 2 Features and 1 Hidden Layer
 
 Let’s create a small neural network that takes **two input features**, passes them through a **hidden layer**, and outputs a **binary class** (0 or 1).
 
