@@ -400,6 +400,3 @@ But in the **wine quality prediction task**, we were doing **regression** — pr
 * Use `Sigmoid()` only when you need a probability or are doing binary classification.
 * Skip it when predicting real-valued outputs (e.g., price, score, quantity).
 
-This section gives you the intuitive understanding of what's happening under the hood when ReLU, Sigmoid, and Backpropagation are used in the student performance prediction model. of what's happening under the hood when ReLU, Sigmoid, and Backpropagation are used in the student performance prediction model.
-
-
