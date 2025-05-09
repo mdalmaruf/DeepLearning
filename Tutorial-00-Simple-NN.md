@@ -25,9 +25,9 @@ A basic neural network includes:
 - **Output Layer**: Produces predictions.
 
 Each **neuron** computes:
-[
+$$
 z = w \cdot x + b,\quad \text{then passes through activation like ReLU: } a = \max(0, z)
-]
+$$
 
 ### Neural Network Flow (Visual Example):
 
