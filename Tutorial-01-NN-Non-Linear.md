@@ -243,14 +243,12 @@ plt.show()
 
 ---
 
-## 🧠 Key Learning Outcomes
+## Key Learning Outcomes
 
 * Understand how to simulate realistic nonlinear datasets
 * Learn deep regression with PyTorch using `nn.Sequential`
 * Observe how deeper layers improve prediction accuracy
 * Evaluate with MAE, RMSE, and R²
-
-✅ Encourage students to modify features (e.g., add `is_holiday`, `rain`, etc.) and re-train to see the model behavior.
 
 
 # Important Note
