@@ -400,3 +400,119 @@ But in the **wine quality prediction task**, we were doing **regression** — pr
 * Use `Sigmoid()` only when you need a probability or are doing binary classification.
 * Skip it when predicting real-valued outputs (e.g., price, score, quantity).
 
+---
+---
+## Week 1 - Full Neural Network Code with Explanations
+
+```python
+# Import necessary PyTorch libraries
+import torch
+import torch.nn as nn
+
+# Step 1: Define the dataset (inputs: [hours studied, hours slept]; output: 0 or 1)
+x_train = torch.tensor([
+    [2.0, 5.0],
+    [3.0, 6.0],
+    [4.0, 4.0],
+    [5.0, 7.0],
+    [6.0, 8.0],
+    [1.0, 3.0]
+])
+
+y_train = torch.tensor([[0.0], [0.0], [0.0], [1.0], [1.0], [0.0]])
+
+# Step 2: Define test data
+x_test = torch.tensor([
+    [4.0, 6.0],
+    [2.0, 4.0]
+])
+
+# Step 3: Build the model
+model = nn.Sequential(
+    nn.Linear(2, 3),  # 2 input features to 3 neurons in the hidden layer
+    nn.ReLU(),        # Activation function to add non-linearity
+    nn.Linear(3, 1),  # 3 hidden neurons to 1 output neuron
+    nn.Sigmoid()      # Activation function to convert output to probability [0,1]
+)
+
+# Step 4: Define the loss function
+loss_fn = nn.BCELoss()  # Binary Cross-Entropy Loss for classification
+
+# Step 5: Define the optimizer
+optimizer = torch.optim.SGD(model.parameters(), lr=0.1)  # Stochastic Gradient Descent
+
+# Step 6: Train the model (for 100 epochs)
+for epoch in range(100):
+    y_pred = model(x_train)                  # Forward pass
+    loss = loss_fn(y_pred, y_train)         # Compute the loss
+
+    optimizer.zero_grad()                   # Clear previous gradients
+    loss.backward()                         # Backpropagation: compute new gradients
+    optimizer.step()                        # Update weights using gradients
+
+    # Print loss every 10 epochs
+    if epoch % 10 == 0:
+        print(f"Epoch {epoch+1}: Loss = {loss.item():.4f}")
+
+# Step 7: Test the model
+with torch.no_grad():  # Disable gradient tracking during evaluation
+    test_probs = model(x_test)                     # Get output probabilities
+    test_classes = (test_probs >= 0.5).int()       # Convert to 0 or 1 based on threshold
+    print("Predicted Probabilities:", test_probs)
+    print("Predicted Classes:", test_classes)
+```
+
+### 🧾 What’s Happening in the Code?
+
+🔢 **What Happens with Output = 0.5?**
+
+* By convention, we use **0.5 as the threshold**:
+
+  * If probability ≥ 0.5 → predicted class = 1 (pass)
+  * If probability < 0.5 → predicted class = 0 (fail)
+* If the model outputs exactly 0.5, it will be classified as 1 due to the `>=` condition in `(test_probs >= 0.5).int()`.
+
+🔄 **What About Multi-Class Problems?**
+
+🧠 **Why Use `Softmax()` in Multi-Class Problems?**
+
+* `Softmax` transforms a vector of raw scores (logits) into **probabilities that sum to 1**.
+* It highlights the **most likely class** while still giving context to others.
+* Example: if a model outputs `[2.0, 1.0, 0.1]`, softmax will convert this to something like `[0.65, 0.25, 0.10]` — i.e., class 0 is most probable.
+
+📚 **How It Works**:
+
+* For each output neuron:
+
+  ```
+  softmax(x_i) = exp(x_i) / sum(exp(all x_j))
+  ```
+* This means larger values become more dominant, while smaller ones are reduced.
+* It’s great for **multi-class classification** where the model must choose **only one label out of many**.
+* For more than 2 classes (e.g., predicting whether a student gets grade A, B, or C), we:
+
+  * Use **multiple output neurons** (one per class)
+  * Replace `Sigmoid()` with `Softmax()` to get probabilities for each class
+  * Use **CrossEntropyLoss** instead of `BCELoss`
+
+Example:
+
+```python
+model = nn.Sequential(
+    nn.Linear(2, 3),
+    nn.ReLU(),
+    nn.Linear(3, 3),   # 3 classes → 3 outputs
+    nn.Softmax(dim=1)  # Convert logits to class probabilities
+)
+```
+
+* **Inputs**: Hours studied and hours slept
+* **Hidden Layer**: Learns patterns that separate pass/fail
+* **ReLU**: Removes negative outputs to promote efficient learning
+* **Sigmoid**: Converts final value to probability (like saying: 85% chance student will pass)
+* **Loss**: Compares predicted probabilities to actual labels
+* **Backpropagation**: Computes how weights should be changed
+* **Optimizer**: Actually updates the model to make it better
+
+
+
