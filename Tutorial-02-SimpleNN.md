@@ -1,102 +1,244 @@
-## Case Study: Predicting Car Headlight Brightness Based on Ambient Light
+# 🏠 Case Study: Predict House Prices Using a Simple Neural Network (with PyTorch)
 
-### Problem Scenario
-
-Modern cars use sensors to **automatically adjust headlight brightness** depending on how bright or dark it is outside.
-
-You're asked to build a **simple neural network** that mimics this behavior:
-
-* In **bright daylight**, the headlights are dim or off.
-* In **dark environments**, the headlights are at full brightness.
-* The transition should be **smooth and adaptive**, not on/off.
+This tutorial introduces students to building, training, and deeply understanding a **basic neural network** for **house price prediction** using **PyTorch**. We’ll not only implement the code but also **explain every step mathematically** and conceptually — ideal for a 1-hour class.
 
 ---
 
-### 🌟 Goal
+## 🎯 Learning Objectives
 
-Design a neural network that:
+By the end of this session, you will:
 
-* Takes **ambient light level** (0–100) as input
-* Outputs a **brightness value** (0–1), where 1 = max brightness
+* Understand how a basic neural network models linear relationships
+* Learn what a neuron is and how it processes input
+* Break down the concepts of weight, bias, activation, loss, and gradient
+* See how forward and backward propagation works mathematically
+* Train a model step-by-step with real examples
 
-This problem has an **inverse nonlinear relationship**:
+---
+
+## 🧠 What Is a Neural Network (Model)?
+
+A neural network is a **function approximator**. At its simplest, it looks like this:
 
 $$
-\text{More ambient light} \Rightarrow \text{Less headlight brightness}
+\hat{y} = w \cdot x + b
 $$
 
+This is **exactly the same** as linear regression, where:
+
+* **x** = input (e.g., house size)
+* **w** = weight (how much input affects output)
+* **b** = bias (base value when x = 0)
+* **\hat{y}** = predicted output (e.g., price)
+
+### 📦 What Are We Fitting?
+
+We are trying to learn the best **weight and bias** that minimizes the difference between our predicted price and the actual price.
+
+Our model starts with random values for weight and bias. As we see more data and calculate **error**, we adjust the weight and bias using **gradient descent** to make better predictions.
+
 ---
 
-## 🧠 Network Design
-
-| Layer        | Details                                      |
-| ------------ | -------------------------------------------- |
-| Input        | 1 feature (Ambient light level: 0 to 100)    |
-| Hidden Layer | 3 neurons with ReLU activation               |
-| Output       | 1 neuron for headlight brightness prediction |
-
----
-
-## Code: Neural Network with Predefined Weights
+## 📅 Step 1: Setup and Import Libraries
 
 ```python
+!pip install torch
 import torch
 import torch.nn as nn
-import matplotlib.pyplot as plt
-
-# Define the model
-class HeadlightControlNet(nn.Module):
-    def __init__(self):
-        super().__init__()
-        self.layer1 = nn.Linear(1, 3)
-        self.layer2 = nn.Linear(3, 1)
-
-        # Manually set weights and biases to simulate behavior
-        self.layer1.weight = nn.Parameter(torch.tensor([[-0.1], [-0.05], [-0.2]]))
-        self.layer1.bias = nn.Parameter(torch.tensor([10.0, 5.0, 15.0]))
-        self.layer2.weight = nn.Parameter(torch.tensor([[0.6, 0.3, 0.5]]))
-        self.layer2.bias = nn.Parameter(torch.tensor([0.0]))
-
-    def forward(self, x):
-        x = self.layer1(x)
-        x = torch.relu(x)
-        x = self.layer2(x)
-        return x
 ```
 
 ---
 
-### Visualize Headlight Brightness Based on Ambient Light
+## 📊 Step 2: Define a Simple House Price Dataset
 
 ```python
-# Instantiate model and generate predictions for ambient light levels
-model = HeadlightControlNet()
-ambient_light = torch.linspace(0, 100, 100).reshape(-1, 1)
-brightness = model(ambient_light).detach()
+# Inputs (scaled: 1000 sqft = 1.0)
+x = torch.tensor([[1.0], [1.5], [2.0]])
 
-# Plot results
-plt.plot(ambient_light.numpy(), brightness.numpy(), label="Headlight Brightness")
-plt.xlabel("Ambient Light Level (0 = dark, 100 = bright)")
-plt.ylabel("Headlight Brightness (0–1)")
-plt.title("Car Headlight Control Using Neural Network")
-plt.legend()
-plt.grid(True)
-plt.show()
+# Outputs (in $1000s)
+y = torch.tensor([[300.0], [450.0], [500.0]])
 ```
 
 ---
 
-## Learned
+## 🧱 Step 3: Define the Model (1 Neuron)
 
-* How to simulate an **inverse nonlinear function** using neural networks
-* How **ReLU activation** enables conditional behavior (on only when needed)
-* The idea that **weights control direction** and **biases shift activation**
+```python
+model = nn.Linear(in_features=1, out_features=1)
+```
+
+This model learns:
+
+$$
+\hat{y} = w \cdot x + b
+$$
+
+Check initial values:
+
+```python
+print("Initial weight:", model.weight.item())
+print("Initial bias:", model.bias.item())
+```
 
 ---
 
-## Student Tasks
+## 🔢 Step 4: Manually Predict with a Forward Pass
 
-1. Modify weights and biases to adjust how quickly brightness fades with light.
-2. Replace ReLU with `Sigmoid` or `Tanh` and see how that changes the transition.
-3. Add a second hidden layer and observe whether the shape becomes smoother.
-4. Can you make it behave more like an actual car — e.g., full brightness until ambient light > 30?
+Let’s assume:
+
+* w = 100
+* b = 200
+* x = 1.0 (1000 sqft)
+
+Then:
+
+$$
+\hat{y} = 100 \cdot 1 + 200 = 300 \text{ (perfect match!)}
+$$
+
+Try this using PyTorch:
+
+```python
+with torch.no_grad():
+    y_pred = model(x)
+    print("Predicted Prices:", y_pred.squeeze())
+```
+
+---
+
+## ⚖️ Step 5: Define Loss Function
+
+Mean Squared Error (MSE):
+
+$$
+L = \frac{1}{n} \sum (\hat{y} - y)^2
+$$
+
+```python
+loss_fn = nn.MSELoss()
+loss = loss_fn(y_pred, y)
+print("Initial Loss:", loss.item())
+```
+
+This tells us how far off we are on average.
+
+---
+
+## 🔙 Step 6: Backpropagation - Calculate Gradients
+
+```python
+model.zero_grad()
+loss.backward()
+```
+
+Now inspect the gradients:
+
+```python
+print("Gradient (∂L/∂w):", model.weight.grad.item())
+print("Gradient (∂L/∂b):", model.bias.grad.item())
+```
+
+These tell us **how much** changing the weight/bias would affect the loss.
+
+---
+
+## 🔄 Step 7: Update Weights Manually
+
+Using gradient descent:
+
+$$
+w := w - \eta \cdot \frac{\partial L}{\partial w}
+$$
+
+Where $\eta = 0.01$ (learning rate).
+
+```python
+learning_rate = 0.01
+
+with torch.no_grad():
+    model.weight -= learning_rate * model.weight.grad
+    model.bias -= learning_rate * model.bias.grad
+```
+
+Then predict again:
+
+```python
+new_preds = model(x)
+new_loss = loss_fn(new_preds, y)
+print("Updated Loss:", new_loss.item())
+```
+
+---
+
+## 🧮 Deep Dive: Full Math Example
+
+Suppose:
+
+* x = 1.5 (1500 sqft)
+* y = 450
+* Initial w = 100, b = 100
+
+### Forward pass:
+
+$$
+\hat{y} = 100 \cdot 1.5 + 100 = 250
+$$
+
+Loss:
+
+$$
+L = (\hat{y} - y)^2 = (250 - 450)^2 = 40000
+$$
+
+### Gradients:
+
+* $\frac{\partial L}{\partial \hat{y}} = 2 \cdot (250 - 450) = -400$
+* $\frac{\partial L}{\partial w} = -400 \cdot 1.5 = -600$
+* $\frac{\partial L}{\partial b} = -400$
+
+### Update:
+
+* $w = 100 + 6 = 106$
+* $b = 100 + 4 = 104$
+
+### New prediction:
+
+$$
+\hat{y} = 106 \cdot 1.5 + 104 = 263 + 104 = 367
+$$
+
+Closer to 450! Keep updating to improve.
+
+---
+
+## 🔁 Full Training Loop (with Optimizer)
+
+```python
+model = nn.Linear(1, 1)
+optimizer = torch.optim.SGD(model.parameters(), lr=0.01)
+loss_fn = nn.MSELoss()
+
+for epoch in range(10):
+    pred = model(x)
+    loss = loss_fn(pred, y)
+
+    optimizer.zero_grad()
+    loss.backward()
+    optimizer.step()
+
+    print(f"Epoch {epoch+1}: weight = {model.weight.item():.2f}, bias = {model.bias.item():.2f}, loss = {loss.item():.2f}")
+```
+
+---
+
+## 📚 Key Takeaways
+
+* **Weight** and **bias** are learned through loss feedback
+* The **forward pass** computes predictions
+* The **loss function** quantifies error
+* **Backpropagation** computes gradients
+* **Gradient descent** updates the parameters to minimize error
+
+---
+
+Next time: We'll add **hidden layers** and **activation functions** to model non-linear relationships.
