@@ -178,3 +178,5 @@ plt.show()
 * Observe how deeper layers improve prediction accuracy
 * Evaluate with MAE, RMSE, and R²
 
+# Important Note
+In this lab, we define the demand equation ourselves to control patterns and test model behavior. In the real world, you wouldn’t know this equation — you’d let the model discover it from the data.
