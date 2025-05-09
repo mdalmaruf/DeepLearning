@@ -381,3 +381,25 @@ w = w - learning_rate × gradient
   * You repeat and get better — just like a neural network.
 
 ---
+
+
+### 🤔 Why Use `Sigmoid()` Here But Not in the Wine Quality Prediction Regression Example?
+
+We use `nn.Sigmoid()` in the **student pass/fail classification task** because:
+
+* We need the output to be interpreted as a **probability between 0 and 1**.
+* It’s a **binary classification problem** (pass = 1, fail = 0), and sigmoid is perfect for this.
+
+But in the **wine quality prediction task**, we were doing **regression** — predicting a **continuous value** (e.g., quality = 5.6, 6.2).
+
+* We **don’t want to squash** the output into a 0–1 range.
+* That would make it impossible to predict actual wine quality ratings that go from 0 to 10.
+
+🔑 **Rule of thumb:**
+
+* Use `Sigmoid()` only when you need a probability or are doing binary classification.
+* Skip it when predicting real-valued outputs (e.g., price, score, quantity).
+
+This section gives you the intuitive understanding of what's happening under the hood when ReLU, Sigmoid, and Backpropagation are used in the student performance prediction model. of what's happening under the hood when ReLU, Sigmoid, and Backpropagation are used in the student performance prediction model.
+
+
