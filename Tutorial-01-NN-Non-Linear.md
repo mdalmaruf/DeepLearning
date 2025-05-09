@@ -77,7 +77,7 @@ bike_df = pd.DataFrame({
     'demand': demand
 })
 ```
-$$demand = 100 + 3T - 2H - 0.5W + 20 * cos(πh / 12) + 10 * I_weekend + ε$$
+$$demand = 100 + 3T - 2H - 0.5W + 20 * cos(πh / 12) + 10 * I\_weekend + ε$$
 ---
 
 ## 🧹 Step 2: Normalize and Convert to Tensors
