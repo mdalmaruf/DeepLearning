@@ -1,147 +1,180 @@
+# Nonlinear Regression on Bicycle Rental Demand
 
-# Introduction to Neural Networks and Deep Learning
-## Week 1 - Build Your First Neural Network in PyTorch
-
-Welcome to the first lecture in our Deep Learning course. In this session, we will introduce the concept of **neural networks**, how they differ from traditional models like linear regression, and walk you through your first real neural network implementation using **PyTorch** in **Google Colab**.
+In this hands-on tutorial, we will use a deep neural network to predict **bicycle rental demand** based on real-world inspired features. We’ll explore all steps in detail—from data simulation and preprocessing to model design, training, evaluation, and interpretation.
 
 ---
 
-## What is a Neural Network?
+## 🚲 Objective
 
-A **neural network** is a set of algorithms inspired by the human brain, designed to recognize patterns. It is the foundation of modern **deep learning**, and it can be used for:
+Predict the number of bikes rented on a given day using:
 
-- Image and speech recognition
-- Natural language processing
-- Predictive analytics
-- Game playing (e.g., AlphaGo)
+* Temperature (°C)
+* Humidity (%)
+* Wind speed (km/h)
+* Day of the week (0=Sunday to 6=Saturday)
+* Hour of the day (0-23)
 
----
-
-## Basic Structure of a Neural Network
-
-A basic neural network includes:
-- **Input Layer**: Accepts raw data (e.g., pixel values, tabular features).
-- **Hidden Layers**: Where computations happen using **weights**, **biases**, and **activation functions**.
-- **Output Layer**: Produces predictions.
-
-Each **neuron** computes:
-\[
-z = w \cdot x + b,\quad \text{then passes through activation like ReLU: } a = \max(0, z)
-\]
-
-### Neural Network Flow (Visual Example):
-
-![Neural Net Diagram](https://raw.githubusercontent.com/StatQuest/signa/main/chapter_01/images/chapter_1_pre_trained_nn.png)
-
-And here is another simple diagram (StatQuest style):
-
-![Dose-to-Effectiveness Flow](attachment:52d02905-4059-4650-a283-96c2b51b351e.png)
+We’ll simulate data with nonlinear trends and interactions to learn how a deep learning model can fit complex relationships.
 
 ---
 
-## Why Neural Networks Are Powerful
+## 📦 Step 1: Simulate a Realistic Dataset
 
-Unlike linear models, neural networks:
-- Can model **nonlinear** relationships
-- Use **activation functions** to bend and shape data
-- Are **composable** — we can stack multiple layers to form a **deep network**
-
----
-
-## 🔧 Setting Up PyTorch in Google Colab
-
-1. Open [Google Colab](https://colab.research.google.com/)
-2. Create a new Python 3 notebook
-3. Run the following command to install PyTorch:
 ```python
-!pip install torch torchvision matplotlib
-```
-
----
-
-## Your First Demo: A Simple 3-Layer Neural Network
-
-### Task:
-We will use a **pre-trained neural network** (weights and biases are already given) to understand how inputs flow through the network and how each layer transforms the data.
-
-### Step-by-step Guide
-
-#### 1. Import Required Libraries
-```python
+import numpy as np
+import pandas as pd
 import torch
-import torch.nn as nn
+from sklearn.preprocessing import MinMaxScaler
 import matplotlib.pyplot as plt
+
+np.random.seed(0)
+rows = 500
+
+# Simulated features
+temperature = np.random.uniform(5, 35, rows)  # in Celsius
+humidity = np.random.uniform(30, 90, rows)    # in %
+wind = np.random.uniform(0, 40, rows)         # in km/h
+day_of_week = np.random.randint(0, 7, rows)   # 0=Sunday, ..., 6=Saturday
+hour = np.random.randint(0, 24, rows)
+
+# Simulated target (nonlinear with noise)
+demand = (
+    100 + 3 * temperature 
+    - 2 * humidity 
+    - 0.5 * wind 
+    + 20 * np.cos(np.pi * hour / 12)  # morning/evening peak
+    + 10 * (day_of_week >= 5)         # weekend boost
+    + np.random.normal(0, 10, rows)   # noise
+)
+
+# Construct DataFrame
+bike_df = pd.DataFrame({
+    'temperature': temperature,
+    'humidity': humidity,
+    'wind': wind,
+    'day_of_week': day_of_week,
+    'hour': hour,
+    'demand': demand
+})
 ```
 
-#### 2. Create the Neural Network Class with Pre-trained Weights
+---
+
+## 🧹 Step 2: Normalize and Convert to Tensors
+
 ```python
-class SimpleNet(nn.Module):
-    def __init__(self):
-        super().__init__()
-        self.layer1 = nn.Linear(1, 3)
-        self.layer2 = nn.Linear(3, 1)
+from sklearn.model_selection import train_test_split
 
-        # Manually setting weights and biases (pretend they were trained)
-        self.layer1.weight = nn.Parameter(torch.tensor([[2.0], [-3.0], [0.5]]))
-        self.layer1.bias = nn.Parameter(torch.tensor([0.5, 0.1, -0.3]))
-        self.layer2.weight = nn.Parameter(torch.tensor([[1.0, 1.0, 1.0]]))
-        self.layer2.bias = nn.Parameter(torch.tensor([0.0]))
+features = bike_df[['temperature', 'humidity', 'wind', 'day_of_week', 'hour']].values
+target = bike_df[['demand']].values
 
-    def forward(self, x):
-        x = self.layer1(x)
-        x = torch.relu(x)
-        x = self.layer2(x)
-        return x
+scaler_x = MinMaxScaler()
+scaler_y = MinMaxScaler()
+X_scaled = scaler_x.fit_transform(features)
+y_scaled = scaler_y.fit_transform(target)
+
+x_train, x_test, y_train, y_test = train_test_split(X_scaled, y_scaled, test_size=0.2, random_state=42)
+
+x_train = torch.tensor(x_train, dtype=torch.float32)
+y_train = torch.tensor(y_train, dtype=torch.float32)
+x_test = torch.tensor(x_test, dtype=torch.float32)
+y_test = torch.tensor(y_test, dtype=torch.float32)
 ```
 
-#### 3. Run a Forward Pass
-```python
-net = SimpleNet()
-x_vals = torch.linspace(-2, 2, 100).reshape(-1, 1)
-y_vals = net(x_vals).detach()
+---
 
-plt.plot(x_vals.numpy(), y_vals.numpy(), label="Neural Net Output")
-plt.title("First Neural Network Demo")
-plt.xlabel("Input x")
-plt.ylabel("Output y")
-plt.legend()
+## 🏗️ Step 3: Define a Deep Neural Network
+
+```python
+import torch.nn as nn
+
+model = nn.Sequential(
+    nn.Linear(5, 32),
+    nn.ReLU(),
+    nn.Linear(32, 32),
+    nn.ReLU(),
+    nn.Linear(32, 1)
+)
+```
+
+---
+
+## ⚙️ Step 4: Compile and Train the Model
+
+```python
+optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
+loss_fn = nn.MSELoss()
+
+losses = []
+for epoch in range(300):
+    model.train()
+    pred = model(x_train)
+    loss = loss_fn(pred, y_train)
+
+    optimizer.zero_grad()
+    loss.backward()
+    optimizer.step()
+    losses.append(loss.item())
+
+    if epoch % 50 == 0:
+        print(f"Epoch {epoch+1}: Loss = {loss.item():.4f}")
+```
+
+---
+
+## 📈 Step 5: Plot Loss Curve
+
+```python
+plt.plot(losses)
+plt.title("Training Loss Over Epochs")
+plt.xlabel("Epoch")
+plt.ylabel("MSE Loss")
 plt.grid(True)
 plt.show()
 ```
 
 ---
 
-## Learned
+## 🧪 Step 6: Evaluate the Model
 
-- How to define a neural network in PyTorch using `nn.Module`
-- What a forward pass means (input → layer → output)
-- How activation functions like ReLU shape the output
-- Visualizing the **nonlinear transformation** that a neural network learns
+```python
+from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 
----
+model.eval()
+with torch.no_grad():
+    y_pred = model(x_test).numpy()
+    y_true = y_test.numpy()
 
-## Key Terms Recap
+    y_pred = scaler_y.inverse_transform(y_pred)
+    y_true = scaler_y.inverse_transform(y_true)
 
-| Term              | Meaning                                                                 |
-|-------------------|-------------------------------------------------------------------------|
-| **Weight**         | Multiplier for each input feature                                       |
-| **Bias**           | Offset added after multiplication                                       |
-| **Activation**     | Nonlinear function like ReLU or Sigmoid                                 |
-| **Forward pass**   | Feeding input through the network to get predictions                    |
-| **Layer**          | A group of neurons that perform transformations                         |
-
----
-
-## Suggested Homework
-
-1. Try changing the weights and biases in the `SimpleNet` class.
-2. Add a second hidden layer and observe changes in the output.
-3. Research what `ReLU` does compared to `Sigmoid`.
+print("MAE:", mean_absolute_error(y_true, y_pred))
+print("RMSE:", mean_squared_error(y_true, y_pred, squared=False))
+print("R²:", r2_score(y_true, y_pred))
+```
 
 ---
 
-## 🧩 Coming Up Next...
+## 📊 Step 7: Visualize Predictions vs Actual
 
-In the next lecture, we will build a **trainable neural network** from scratch and use a real dataset to learn weights — introducing concepts like **loss functions** and **gradient descent**.
+```python
+plt.figure(figsize=(10, 5))
+plt.plot(y_true, label='True Demand')
+plt.plot(y_pred, label='Predicted Demand')
+plt.legend()
+plt.title("Predicted vs True Bike Demand")
+plt.xlabel("Sample")
+plt.ylabel("Number of Bikes Rented")
+plt.grid(True)
+plt.show()
+```
 
 ---
+
+## 🧠 Key Learning Outcomes
+
+* Understand how to simulate realistic nonlinear datasets
+* Learn deep regression with PyTorch using `nn.Sequential`
+* Observe how deeper layers improve prediction accuracy
+* Evaluate with MAE, RMSE, and R²
+
