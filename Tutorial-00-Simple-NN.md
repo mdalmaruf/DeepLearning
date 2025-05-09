@@ -514,5 +514,87 @@ model = nn.Sequential(
 * **Backpropagation**: Computes how weights should be changed
 * **Optimizer**: Actually updates the model to make it better
 
+# Final Update
+```python
+# Import required libraries
+import torch
+import torch.nn as nn
+import random
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Set random seed for reproducibility
+seed = 42
+random.seed(seed)
+np.random.seed(seed)
+torch.manual_seed(seed)
+
+# Step 1: Define the dataset
+x_train = torch.tensor([
+    [2.0, 5.0],
+    [3.0, 6.0],
+    [4.0, 4.0],
+    [5.0, 7.0],
+    [6.0, 8.0],
+    [1.0, 3.0]
+])
+
+y_train = torch.tensor([[0.0], [0.0], [0.0], [1.0], [1.0], [0.0]])
+
+# Step 2: Define test data
+x_test = torch.tensor([
+    [4.0, 6.0],
+    [2.0, 4.0]
+])
+
+# Step 3: Build the model
+model = nn.Sequential(
+    nn.Linear(2, 3),  # 2 input features → 3 hidden neurons
+    nn.ReLU(),        # Apply non-linearity
+    nn.Linear(3, 1),  # 3 hidden → 1 output
+    nn.Sigmoid()      # Convert output to probability
+)
+
+# Step 4: Define loss function and optimizer
+loss_fn = nn.BCELoss()
+optimizer = torch.optim.SGD(model.parameters(), lr=0.1)
+
+# Step 5: Train the model
+losses = []
+for epoch in range(300):
+    y_pred = model(x_train)
+    loss = loss_fn(y_pred, y_train)
+
+    optimizer.zero_grad()
+    loss.backward()
+    optimizer.step()
+
+    losses.append(loss.item())
+    if epoch % 10 == 0:
+        print(f"Epoch {epoch+1}: Loss = {loss.item():.4f}")
+
+# Step 6: Plot loss curve
+plt.plot(losses)
+plt.title("Training Loss Curve")
+plt.xlabel("Epoch")
+plt.ylabel("Loss")
+plt.grid(True)
+plt.show()
+
+# Step 7: Test the model
+with torch.no_grad():
+    test_probs = model(x_test)
+    test_classes = (test_probs >= 0.5).int()
+    print("Predicted Probabilities:", test_probs)
+    print("Predicted Classes:", test_classes)
+
+# Step 8: Evaluate training accuracy
+with torch.no_grad():
+    train_probs = model(x_train)
+    train_classes = (train_probs >= 0.5).int()
+    correct = (train_classes == y_train.int()).sum().item()
+    accuracy = correct / y_train.size(0)
+    print(f"Training Accuracy: {accuracy * 100:.2f}%")
+```
 
 
