@@ -264,6 +264,7 @@ Use visualizations like the **loss curve** and validation metrics to fine-tune t
 
 ### 🧪 Which Activation Functions and When?
 
+[Activation Function](images/activation_function.JPG)
 * **ReLU (Rectified Linear Unit)**: Default for most hidden layers. It outputs zero for negative inputs and passes through positive inputs. Helps mitigate vanishing gradient problems and is computationally efficient.
 
   * Example: Used in this lab between layers to introduce non-linearity.
