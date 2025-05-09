@@ -1,3 +1,61 @@
+
+# Introduction to Neural Networks and Deep Learning
+## Week 1 - Build Your First Neural Network in PyTorch
+
+Welcome to the first lecture in our Deep Learning course. In this session, we will introduce the concept of **neural networks**, how they differ from traditional models like linear regression, and walk you through your first real neural network implementation using **PyTorch** in **Google Colab**.
+
+---
+
+## What is a Neural Network?
+
+A **neural network** is a set of algorithms inspired by the human brain, designed to recognize patterns. It is the foundation of modern **deep learning**, and it can be used for:
+
+- Image and speech recognition
+- Natural language processing
+- Predictive analytics
+- Game playing (e.g., AlphaGo)
+
+---
+
+## Basic Structure of a Neural Network
+
+A basic neural network includes:
+- **Input Layer**: Accepts raw data (e.g., pixel values, tabular features).
+- **Hidden Layers**: Where computations happen using **weights**, **biases**, and **activation functions**.
+- **Output Layer**: Produces predictions.
+
+Each **neuron** computes:
+\[
+z = w \cdot x + b,\quad \text{then passes through activation like ReLU: } a = \max(0, z)
+\]
+
+### Neural Network Flow (Visual Example):
+
+![Neural Net Diagram](images/NN-1.PNG)
+
+---
+
+## Why Neural Networks Are Powerful
+
+Unlike linear models, neural networks:
+- Can model **nonlinear** relationships
+- Use **activation functions** to bend and shape data
+- Are **composable** — we can stack multiple layers to form a **deep network**
+
+---
+
+## 🔧 Setting Up PyTorch in Google Colab
+
+1. Open [Google Colab](https://colab.research.google.com/)
+2. Create a new Python 3 notebook
+3. Run the following command to install PyTorch:
+```python
+!pip install torch torchvision matplotlib
+```
+
+---
+
+
 # 🧪 BONUS: Neural Network for Classification with 2 Features and 1 Hidden Layer
 
 Let’s create a small neural network that takes **two input features**, passes them through a **hidden layer**, and outputs a **binary class** (0 or 1).
