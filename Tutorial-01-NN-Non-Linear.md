@@ -20,6 +20,26 @@ We’ll simulate data with nonlinear trends and interactions to learn how a deep
 
 ## 📦 Step 1: Simulate a Realistic Dataset
 
+### 💬 Code Explanation
+
+* `np.random.seed(0)` ensures reproducibility — you get the same data every time you run the code.
+* `rows = 500` means we are simulating 500 rows of data.
+* **Feature simulation**:
+
+  * `temperature`: values between 5°C and 35°C.
+  * `humidity`: values between 30% and 90%.
+  * `wind`: wind speed in km/h between 0 and 40.
+  * `day_of_week`: integers from 0 to 6, where 0 is Sunday.
+  * `hour`: integers from 0 to 23, representing hour of the day.
+* **Target (`demand`)** is computed using a nonlinear equation that models how real-world bike rental demand works:
+
+  * Increases with temperature
+  * Decreases with humidity and wind
+  * Peaks during morning and evening hours due to cosine function
+  * Is higher on weekends (Saturday and Sunday)
+  * Includes Gaussian noise to simulate measurement errors or randomness
+* `pd.DataFrame(...)` constructs a pandas DataFrame to organize the simulated dataset for easy processing and viewing.
+
 ```python
 import numpy as np
 import pandas as pd
@@ -62,6 +82,13 @@ bike_df = pd.DataFrame({
 
 ## 🧹 Step 2: Normalize and Convert to Tensors
 
+### 💬 Code Explanation
+
+* We first split the dataset into **input features** (`temperature`, `humidity`, etc.) and the **target** (`demand`).
+* `MinMaxScaler()` rescales values to range between 0 and 1 — this helps neural networks converge faster.
+* `train_test_split(...)` divides the dataset into 80% training and 20% testing.
+* `torch.tensor(..., dtype=torch.float32)` converts NumPy arrays into PyTorch tensors, which are required for training the model using PyTorch operations.
+
 ```python
 from sklearn.model_selection import train_test_split
 
@@ -85,6 +112,13 @@ y_test = torch.tensor(y_test, dtype=torch.float32)
 
 ## 🏗️ Step 3: Define a Deep Neural Network
 
+### 💬 Code Explanation
+
+* `nn.Sequential(...)` allows us to stack layers easily in PyTorch.
+* `nn.Linear(5, 32)` means the input layer has 5 features, and the first hidden layer has 32 neurons.
+* `nn.ReLU()` introduces non-linearity to the model — without this, the network would only learn linear functions.
+* We use two hidden layers of size 32 with ReLU, followed by an output layer `nn.Linear(32, 1)` that produces one continuous output: the predicted bike demand.
+
 ```python
 import torch.nn as nn
 
@@ -100,6 +134,18 @@ model = nn.Sequential(
 ---
 
 ## ⚙️ Step 4: Compile and Train the Model
+
+### 💬 Code Explanation
+
+* `optimizer = torch.optim.Adam(...)` uses the Adam optimizer, which adapts the learning rate during training and usually performs better than plain SGD.
+* `nn.MSELoss()` is the loss function — Mean Squared Error is appropriate for regression tasks.
+* We loop through 300 **epochs** (complete passes through the training data):
+
+  * `model.train()` sets the model to training mode.
+  * `pred = model(x_train)` runs a forward pass.
+  * `loss.backward()` computes gradients for each parameter.
+  * `optimizer.step()` updates the model parameters.
+  * Every 50 epochs, we print the loss so students can track progress.
 
 ```python
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
@@ -124,6 +170,13 @@ for epoch in range(300):
 
 ## 📈 Step 5: Plot Loss Curve
 
+### 💬 Code Explanation
+
+* After training, we store the loss values in a list called `losses`.
+* This code block plots the **loss curve**, showing how the error reduces over time.
+* It helps verify if the model is learning effectively. A decreasing trend indicates improvement.
+* If the curve flattens or increases, it could signal overfitting or a learning rate issue.
+
 ```python
 plt.plot(losses)
 plt.title("Training Loss Over Epochs")
@@ -136,6 +189,18 @@ plt.show()
 ---
 
 ## 🧪 Step 6: Evaluate the Model
+
+### 💬 Code Explanation
+
+* We evaluate the model on **test data** to see how well it generalizes.
+* `model.eval()` switches to evaluation mode (e.g., disables dropout if any).
+* `torch.no_grad()` ensures gradients aren't tracked during prediction.
+* We **inverse transform** the predictions and labels to their original scales for proper interpretation.
+* **Evaluation metrics**:
+
+  * `MAE`: Average absolute difference between prediction and true values
+  * `RMSE`: Square root of mean squared error (penalizes large errors)
+  * `R²`: Measures how well predictions explain the variance in data (closer to 1 is better)
 
 ```python
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
@@ -157,6 +222,13 @@ print("R²:", r2_score(y_true, y_pred))
 
 ## 📊 Step 7: Visualize Predictions vs Actual
 
+### 💬 Code Explanation
+
+* This plot overlays the model's predictions with the actual demand values from the test set.
+* Helps visually inspect where predictions are close or far off.
+* Ideal outcome: predicted line should track close to the actual line.
+* Discrepancies can highlight underfitting or noisy inputs.
+
 ```python
 plt.figure(figsize=(10, 5))
 plt.plot(y_true, label='True Demand')
@@ -177,6 +249,9 @@ plt.show()
 * Learn deep regression with PyTorch using `nn.Sequential`
 * Observe how deeper layers improve prediction accuracy
 * Evaluate with MAE, RMSE, and R²
+
+✅ Encourage students to modify features (e.g., add `is_holiday`, `rain`, etc.) and re-train to see the model behavior.
+
 
 # Important Note
 In this lab, we define the demand equation ourselves to control patterns and test model behavior. In the real world, you wouldn’t know this equation — you’d let the model discover it from the data.
