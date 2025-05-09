@@ -31,7 +31,7 @@ z = w \cdot x + b,\quad \text{then passes through activation like ReLU: } a = \m
 
 ### Neural Network Flow (Visual Example):
 
-![Neural Net Diagram](images/NN-1.PNG)
+![Neural Net Diagram](images/NN-1.png)
 
 ---
 
