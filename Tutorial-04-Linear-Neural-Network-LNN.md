@@ -254,6 +254,23 @@ $L = \frac{1}{n} \sum_{i=1}^n (\hat{y}_i - y_i)^2$
 ---
 
 ## 5️⃣ Backward Pass: Gradient Descent
+### Why Do We Need the Backward Pass?
+
+The **forward pass** computes predictions based on current weights and bias — but that’s only half of the learning process. We also need to **improve** those weights and bias to make the model better. This is where the **backward pass** comes in.
+
+The backward pass allows us to:
+
+* Quantify **how much each parameter contributed** to the prediction error
+* Compute the **gradients (partial derivatives)** of the loss
+* **Adjust weights and bias** to reduce future error
+
+Without the backward pass:
+
+* We cannot learn from mistakes
+* There’s no way to minimize the loss
+* The model becomes static and ineffective
+
+The backward pass is the engine of **gradient descent**— it enables the model to become smarter by slightly changing weights and bias in the correct direction.
 
 ### What is a Derivative?
 
