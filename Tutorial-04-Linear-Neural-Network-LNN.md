@@ -1,4 +1,4 @@
-![Basic Neural Network Diagram]([https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Artificial_neuron_model.svg/640px-Artificial_neuron_model.svg.png](https://media.geeksforgeeks.org/wp-content/uploads/20240614193911/Linear-Regression-vs-Neural-Networks.webp))
+![Basic Neural Network Diagram](images/LNN.png)
 
 # Linear Neural Networks for Regression (Expanded 3-Hour Lecture Guide)
 
