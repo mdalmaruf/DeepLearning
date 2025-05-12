@@ -207,7 +207,28 @@ Thus, random initialization + gradient descent is the key to learning!
 
 ### Visual Representation
 
-![Neuron Diagram](https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Artificial_neuron_model.svg/640px-Artificial_neuron_model.svg.png)
+
+To visualize how a **Linear Neural Network** for regression works, imagine a single neuron processing one or more input features:
+
+```
+Input Features: x₁, x₂, ..., xₙ
+        │       │        │
+        ▼       ▼        ▼
+       [w₁]   [w₂]    ... [wₙ]     ← weights (W)
+        │       │        │
+        └──► Weighted Sum (Σ wᵢ·xᵢ) ──┐
+                                     ▼
+                                + [bias b]
+                                     ▼
+                              Output: ŷ (prediction)
+```
+
+In regression:
+
+* **Inputs (x)** are the features (like hours studied, attendance)
+* **Weights (w)** determine the importance of each feature
+* **Bias (b)** shifts the output for better fitting
+* **Prediction (ŷ)** is the estimated target value
 
 ### Forward Pass
 
@@ -805,4 +826,3 @@ Give students:
 
 ---
 
-> "Understanding linear networks is like learning to walk before you run. Master the basics, and the rest will follow."
