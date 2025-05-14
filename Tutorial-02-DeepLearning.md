@@ -1,6 +1,6 @@
-# Predicting Bike Demand Without Knowing the Equation (2-Hour Deep Learning Workshop)
+# Predicting Bike Demand Without Knowing the Equation (Deep Learning Workshop)
 
-Here, we will use a deep neural network to predict **bicycle rental demand** based on real-world inspired features. We’ll explore all steps in detail—from data simulation and preprocessing to model design, training, evaluation, and interpretation.
+Here, we will use a deep neural network to predict **bicycle rental demand** based on real-world inspired features. We will explore all steps in detail—from data simulation and preprocessing to model design, training, evaluation, and interpretation.
 
 ---
 
