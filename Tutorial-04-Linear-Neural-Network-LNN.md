@@ -1,7 +1,6 @@
 ![Basic Neural Network Diagram](images/LNN.png)
 
-# Linear Neural Networks for Regression (Expanded 3-Hour Lecture Guide)
-
+# Linear Neural Networks for Regression 
 ## 🎯 Learning Objectives
 
 By the end of this session, students will be able to:
