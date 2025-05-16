@@ -844,6 +844,7 @@ Give students:
 
 # Try In Class
 
+## One feature is used for training
 ```python
 from sklearn.linear_model import SGDRegressor
 from sklearn.metrics import mean_squared_error, r2_score
@@ -888,3 +889,51 @@ mse, r2
 
 ```
 
+## All the features are used for training
+```python
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error, r2_score
+from sklearn.model_selection import train_test_split
+from sklearn.datasets import fetch_california_housing
+from sklearn.preprocessing import StandardScaler
+import matplotlib.pyplot as plt
+import numpy as np
+
+# Step 1: Load the California Housing dataset
+data = fetch_california_housing()
+X = data.data         # All 8 input features
+y = data.target       # Target: median house price
+
+# Step 2: Feature scaling (standardize X)
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+
+# Step 3: Split into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X_scaled, y, test_size=0.2, random_state=42)
+
+# Step 4: Train Linear Regression model
+model = LinearRegression()
+model.fit(X_train, y_train)
+
+# Step 5: Predict on the test set
+y_pred = model.predict(X_test)
+
+# Step 6: Evaluate the model
+mse = mean_squared_error(y_test, y_pred)
+r2 = r2_score(y_test, y_pred)
+
+print(f"Mean Squared Error: {mse:.4f}")
+print(f"R² Score: {r2:.4f}")
+
+# Step 7: Visualization - Actual vs Predicted Prices
+plt.figure(figsize=(8, 6))
+plt.scatter(y_test, y_pred, alpha=0.5, color='purple')
+plt.plot([y_test.min(), y_test.max()], [y_test.min(), y_test.max()], 'r--', lw=2, label='Perfect Prediction')
+plt.xlabel('Actual Prices')
+plt.ylabel('Predicted Prices')
+plt.title('Actual vs Predicted House Prices (All Features)')
+plt.legend()
+plt.grid(True)
+plt.tight_layout()
+plt.show()
+```
