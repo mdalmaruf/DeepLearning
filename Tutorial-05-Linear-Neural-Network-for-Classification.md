@@ -81,6 +81,20 @@ y_test = torch.tensor(y_test, dtype=torch.float32).reshape(-1, 1)
 
 ---
 ![NN_Classification](images/NN_Classification.png)
+Input Layer       Hidden Layer 1 (12)              Hidden Layer 2 (8)             Output Layer (1)
+--------------    --------------------------       --------------------------     --------------------
+   x1 ─────────┬▶  h1 = ReLU(w1·x + b1) ─────┬▶     h1' = ReLU(w1·h + b1) ────┬▶   ŷ = Sigmoid(w·h' + b)
+   x2 ─────────┤▶  h2 = ReLU(w2·x + b2) ─────┤▶     h2' = ReLU(w2·h + b2) ────┤▶
+   x3 ─────────┤▶  h3 = ReLU(w3·x + b3) ─────┤▶     h3' = ReLU(w3·h + b3) ────┤▶
+   ...         │   ...                      │      ...                       │
+   x8 ─────────┴▶  h12 = ReLU(w12·x + b12) ─┴▶     h8' = ReLU(w8·h + b8) ────┴▶
+
+Where:
+- **w·x + b** is the dot product of input vector with the neuron's weights plus bias.
+- **ReLU(z)** returns max(0, z) — so it only outputs positive signals.
+- Example:  
+  `h1 = ReLU(0.4·x1 - 0.3·x2 + ... + 0.2·x8 + 0.5)`
+- All weights (w) and biases (b) are initialized randomly by PyTorch and updated during training via gradient descent.
 
 ## Step 3: Define the Neural Network Model
 
