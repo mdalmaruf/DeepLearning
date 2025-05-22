@@ -391,4 +391,113 @@ In this tutorial, we:
 * Used mini-batches to train efficiently and stabilize updates
 * Evaluated the model using accuracy and a confusion matrix
 
+# Complete code
+```python
+# Complete, commented code based on the detailed tutorial you provided
+
+import numpy as np
+import pandas as pd
+import torch
+import torch.nn as nn
+import torch.optim as optim
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import confusion_matrix
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+# Step 1: Load the dataset from the web
+url = "https://raw.githubusercontent.com/jbrownlee/Datasets/master/pima-indians-diabetes.data.csv"
+columns = [
+    'Pregnancies', 'Glucose', 'BloodPressure', 'SkinThickness',
+    'Insulin', 'BMI', 'DiabetesPedigreeFunction', 'Age', 'Outcome'
+]
+dataset = pd.read_csv(url, header=None, names=columns)
+
+# Step 2: Split features and target
+X = dataset.iloc[:, :-1].values  # all columns except Outcome
+y = dataset.iloc[:, -1].values   # only the Outcome column
+
+# Step 3: Split data into training and test sets (80/20)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Step 4: Convert NumPy arrays to PyTorch tensors
+X_train = torch.tensor(X_train, dtype=torch.float32)
+y_train = torch.tensor(y_train, dtype=torch.float32).reshape(-1, 1)
+X_test = torch.tensor(X_test, dtype=torch.float32)
+y_test = torch.tensor(y_test, dtype=torch.float32).reshape(-1, 1)
+
+# Step 5: Define the model architecture
+model = nn.Sequential(
+    nn.Linear(8, 12),  # 8 input features to 12 neurons
+    nn.ReLU(),         # ReLU activation for non-linearity
+    nn.Linear(12, 8),  # 12 to 8 neurons
+    nn.ReLU(),         # ReLU again
+    nn.Linear(8, 1),   # 8 to 1 output
+    nn.Sigmoid()       # Sigmoid for binary classification
+)
+
+# Step 6: Define the loss function and optimizer
+loss_fn = nn.BCELoss()  # Binary Cross Entropy Loss
+optimizer = optim.Adam(model.parameters(), lr=0.001)
+
+# Step 7: Training loop
+n_epochs = 300
+batch_size = 10
+losses = []
+
+for epoch in range(n_epochs):
+    epoch_loss = 0.0
+    for i in range(0, len(X_train), batch_size):
+        Xbatch = X_train[i:i+batch_size]
+        ybatch = y_train[i:i+batch_size]
+        y_pred = model(Xbatch)
+        loss = loss_fn(y_pred, ybatch)
+
+        optimizer.zero_grad()
+        loss.backward()
+        optimizer.step()
+
+        epoch_loss += loss.item()
+
+    avg_loss = epoch_loss / (len(X_train) // batch_size)
+    losses.append(avg_loss)
+    print(f"Epoch {epoch+1}/{n_epochs}, Loss: {avg_loss:.4f}")
+
+# Step 8: Plot the loss curve
+plt.plot(losses)
+plt.title("Loss Curve")
+plt.xlabel("Epoch")
+plt.ylabel("Loss")
+plt.grid(True)
+plt.tight_layout()
+plt.show()
+
+# Step 9: Evaluate the model on test data
+with torch.no_grad():
+    y_pred = model(X_test).round()  # Predictions
+    accuracy = (y_pred == y_test).float().mean()
+    print(f"Test Accuracy: {accuracy.item():.4f}")
+
+# Step 10: Confusion matrix visualization
+cm = confusion_matrix(y_test.numpy(), y_pred.numpy())
+sns.heatmap(cm, annot=True, fmt='d', cmap='Blues')
+plt.title("Confusion Matrix")
+plt.xlabel("Predicted")
+plt.ylabel("Actual")
+plt.tight_layout()
+plt.show()
+
+# Step 11: Sample predictions
+print("Sample Predictions:")
+for i in range(5):
+    print(f"Input: {X_test[i].tolist()} → Predicted: {int(y_pred[i].item())}, Actual: {int(y_test[i].item())}")
+
+# Why You May Get Less Accuracy (e.g., ~70%)
+# Small dataset (768 samples) → hard to generalize
+# Imbalanced classes (more non-diabetic than diabetic)
+# No feature engineering (raw values only)
+# Model too shallow or simple for complex patterns
+# Default learning rate or epochs may not be optimal
+
+```
 
