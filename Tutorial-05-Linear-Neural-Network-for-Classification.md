@@ -40,6 +40,7 @@ Neural networks are flexible models capable of learning complex patterns in data
 
 ```python
 import numpy as np
+import pandas as pd
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -60,10 +61,18 @@ import matplotlib.pyplot as plt
 ## Step 2: Load and Prepare the Data
 
 ```python
-dataset = np.loadtxt('pima-indians-diabetes.csv', delimiter=',')
-X = dataset[:, 0:8]  # input features
-y = dataset[:, 8]    # labels
+# dataset = np.loadtxt('pima-indians-diabetes.csv', delimiter=',')
+# X = dataset[:, 0:8]  # input features
+# y = dataset[:, 8]    # labels
 
+url = "https://raw.githubusercontent.com/jbrownlee/Datasets/master/pima-indians-diabetes.data.csv"
+columns = [
+    'Pregnancies', 'Glucose', 'BloodPressure', 'SkinThickness',
+    'Insulin', 'BMI', 'DiabetesPedigreeFunction', 'Age', 'Outcome'
+]
+dataset = pd.read_csv(url, header=None, names=columns)
+X = dataset.iloc[:, :-1].values
+y = dataset.iloc[:, -1].values
 # Split into training and test sets
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
