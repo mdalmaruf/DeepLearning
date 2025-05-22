@@ -331,3 +331,160 @@ In this tutorial, we:
 These choices were made to fit the **nature of the dataset (tabular, binary labels)** and **keep the model intuitive and effective**.
 
 You now not only understand how to build the model, but also why each decision makes sense for this specific problem.
+
+
+# Neural Network for Classification (PyTorch Tutorial)
+
+This tutorial provides a beginner-friendly, detailed explanation of how to build a simple neural network for binary classification using PyTorch. The dataset used is the well-known **Pima Indians Diabetes** dataset. We will walk through each part of the process, including data preparation, model construction, training, evaluation, and making predictions.
+
+---
+
+## 🔍 Understanding the Neural Network Model
+
+### Why Use a Neural Network?
+
+Neural networks are flexible models capable of learning complex patterns in data. They are composed of layers of interconnected nodes (neurons), which apply learned transformations to input data.
+
+### Why `Sequential`?
+
+`nn.Sequential` in PyTorch is a convenient way to stack layers in a straight line (one after the other). It is ideal when the data flow is **linear and unbranched** (i.e., input → hidden layer(s) → output).
+
+### Why `Linear`?
+
+Each `nn.Linear` layer performs:
+
+y = Wx + b
+
+It represents a **fully connected layer**, where every input is connected to every neuron. It's the fundamental computation unit of neural nets.
+
+### Are There Other Model Types?
+
+Yes! Alternatives include:
+
+* `nn.Module`: for custom, more flexible architectures (e.g., branches, skip connections).
+* Convolutional Neural Networks (CNN): for image data.
+* Recurrent Neural Networks (RNN): for sequential data like time series or text.
+
+Use `Sequential` for simple feedforward models, and `nn.Module` when you need more control.
+
+---
+
+## ⚙️ Activation Functions: Why and When
+
+### ReLU (Rectified Linear Unit)
+
+Used in hidden layers.
+
+* Formula: $f(x) = \max(0, x)$
+* Fast and helps avoid vanishing gradients.
+
+### Sigmoid
+
+Used in the output layer for binary classification.
+
+* Outputs values between 0 and 1.
+* Interpretable as probability.
+
+### Other Common Activations
+
+* **Tanh**: like sigmoid but outputs between -1 and 1. Used when centered activations are preferred.
+* **Softmax**: used in multi-class classification (more than 2 classes).
+* **Linear**: used in regression tasks (no transformation).
+
+---
+
+## 🧠 Optimizers: What and Why?
+
+An optimizer updates the network's weights to minimize the loss.
+
+### Adam Optimizer
+
+* Combines the benefits of momentum and RMSProp.
+* Automatically adjusts the learning rate.
+* Great for noisy problems and sparse gradients.
+
+### Alternatives
+
+* **SGD**: classic stochastic gradient descent (slower, but simpler).
+* **RMSProp**: good for recurrent networks.
+* **Adagrad**: adapts learning rate for each parameter.
+
+Choose `Adam` when unsure — it's widely effective.
+
+---
+
+## 📦 Batch Size and Epochs
+
+### What is Batch Size?
+
+Batch size = number of samples processed before model updates its weights.
+
+* **Small batch** = noisy updates but more frequent.
+* **Large batch** = stable updates but more memory and slower.
+
+### Why Not One Sample at a Time?
+
+* Inefficient due to low hardware utilization.
+* Batch processing enables parallel computation (GPU).
+
+### How to Pick Batch Size?
+
+* Common values: 8, 16, 32, 64
+* Experiment based on memory and convergence stability.
+
+### What is an Epoch?
+
+An epoch is **one full pass** through the entire training dataset.
+
+---
+
+## 🎯 Evaluation Metrics
+
+### For Classification
+
+* **Accuracy**:
+
+  $\text{Accuracy} = \frac{\text{Correct Predictions}}{\text{Total Predictions}}$
+* **Confusion Matrix**: shows performance across all prediction classes.
+
+```python
+from sklearn.metrics import confusion_matrix
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+with torch.no_grad():
+    y_pred = model(X_test).round()
+    cm = confusion_matrix(y_test.numpy(), y_pred.numpy())
+    sns.heatmap(cm, annot=True, fmt='d')
+    plt.xlabel('Predicted')
+    plt.ylabel('Actual')
+    plt.title('Confusion Matrix')
+    plt.show()
+```
+
+* **True Positive (TP)**: Correctly predicted positive class
+* **True Negative (TN)**: Correctly predicted negative class
+* **False Positive (FP)**: Incorrectly predicted as positive
+* **False Negative (FN)**: Incorrectly predicted as negative
+
+### For Regression
+
+If this were a regression problem:
+
+* **Loss**: Mean Squared Error (MSE) or Mean Absolute Error (MAE)
+* **Activation**: Final layer is **Linear** (no activation)
+* Evaluation metric: RMSE, R², MAE
+
+---
+
+## ✅ Summary
+
+* Use `Sequential` for simple models, `nn.Module` for complex ones.
+* Use `ReLU` in hidden layers, `Sigmoid` for binary outputs.
+* `Adam` optimizer is a strong default.
+* Choose batch size and epochs based on trial, compute limits.
+* Evaluate classification using **accuracy** and **confusion matrix**.
+* For regression, use MSE loss and linear activation.
+
+This knowledge helps you build, optimize, and evaluate deep learning models effectively with PyTorch.
+
