@@ -80,6 +80,7 @@ y_test = torch.tensor(y_test, dtype=torch.float32).reshape(-1, 1)
 * Labels are reshaped to 2D (column vector).
 
 ---
+![Neural Network](images/NN_Classification.png)
 ```
 Input Layer       Hidden Layer 1 (12)              Hidden Layer 2 (8)             Output Layer (1)
 --------------    --------------------------       --------------------------     --------------------
