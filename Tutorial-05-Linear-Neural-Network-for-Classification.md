@@ -95,6 +95,30 @@ model = nn.Sequential(
 )
 ```
 
+When you write:
+
+```python
+nn.Linear(8, 12)
+```
+PyTorch automatically creates:
+
+```python
+self.weight = torch.Tensor(12, 8)
+self.bias = torch.Tensor(12)
+```
+and fills them with default random values (learned later via backpropagation). Each `nn.Linear(in_features, out_features)` layer contains:
+
+- Weight matrix of shape (out_features, in_features)
+- Bias vector of shape (out_features)
+
+You can access them directly like this:
+```python
+# Accessing weights and biases from the first Linear layer
+print(model[0].weight)  # shape: [12, 8]
+print(model[0].bias)    # shape: [12]
+
+```
+
 * 3 `Linear` layers are fully connected layers.
 * `ReLU` adds non-linearity.
 * `Sigmoid` outputs a value between 0 and 1 for binary classification.
