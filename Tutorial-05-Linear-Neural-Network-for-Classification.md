@@ -1,8 +1,8 @@
 # Neural Network for Classification (PyTorch Tutorial)
 
-This tutorial provides a beginner-friendly, detailed explanation of how to build a simple neural network for binary classification using PyTorch. The dataset used is the well-known **Pima Indians Diabetes** dataset. We will walk through each part of the process, including data preparation, model construction, training, evaluation, and making predictions.
+This tutorial provides a detailed explanation of how to build a simple neural network for binary classification using PyTorch. The dataset used is the well-known **Pima Indians Diabetes** dataset. We will walk through each part of the process, including data preparation, model construction, training, evaluation, and making predictions.
 
-We’ll also explain **why each choice was made** in the context of this specific example — including the model architecture, activation functions, optimizer, and training configuration — so you understand not just *how* but also *why* it works.
+We will also explain **why each choice was made** in the context of this specific example — including the model architecture, activation functions, optimizer, and training configuration — so you understand not just *how* but also *why* it works.
 
 ---
 
